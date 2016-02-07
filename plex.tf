@@ -33,7 +33,7 @@ variable "plex_config_dir" {
 }
 
 variable "media_dir" {
-	type = "string"	
+	type = "string"
 }
 
 variable "tv_dir" {
@@ -65,7 +65,7 @@ resource "docker_image" "plex" {
 }
 
 resource "docker_network" "private_network" {
-    name = "htpc_network"
+  name = "htpc_network"
 	check_duplicate = true
 }
 
@@ -91,11 +91,11 @@ resource "docker_container" "nzbget" {
 	}
 	volumes = {
 		host_path = "${var.nzbget_config_dir}"
-		container_path = "/config"		
+		container_path = "/config"
 	}
 	volumes = {
 		host_path = "${var.downloads_dir}"
-		container_path = "/downloads"		
+		container_path = "/downloads"
 	}
 	depends_on = ["docker_network.private_network"]
 }
@@ -127,15 +127,15 @@ resource "docker_container" "sonarr" {
 	}
 	volumes = {
 		host_path = "${var.sonarr_config_dir}"
-		container_path = "/config"		
+		container_path = "/config"
 	}
 	volumes = {
 		host_path = "${var.downloads_dir}"
-		container_path = "/downloads"		
+		container_path = "/downloads"
 	}
 	volumes = {
 		host_path = "${var.tv_dir}"
-		container_path = "/tv"		
+		container_path = "/tv"
 	}
 	depends_on = ["docker_container.nzbget"]
 }
@@ -150,7 +150,7 @@ resource "docker_container" "couchpotato" {
 	ports = {
 		internal = 5050
 		external = 5050
-	}	
+	}
 	env = [
 		"PUID=${var.uid}",
 		"PGID=${var.gid}"
@@ -162,15 +162,15 @@ resource "docker_container" "couchpotato" {
 	}
 	volumes = {
 		host_path = "${var.couchpotato_config_dir}"
-		container_path = "/config"		
+		container_path = "/config"
 	}
 	volumes = {
 		host_path = "${var.downloads_dir}"
-		container_path = "/downloads"		
+		container_path = "/downloads"
 	}
 	volumes = {
 		host_path = "${var.media_dir}"
-		container_path = "/media"		
+		container_path = "/media"
 	}
 	depends_on = ["docker_container.nzbget"]
 }
@@ -213,11 +213,11 @@ resource "docker_container" "plex" {
 	}
 	volumes = {
 		host_path = "${var.plex_config_dir}"
-		container_path = "/config"		
+		container_path = "/config"
 	}
 	volumes = {
 		host_path = "${var.media_dir}"
-		container_path = "/media"		
+		container_path = "/media"
 	}
 	depends_on = ["docker_container.sonarr", "docker_container.couchpotato"]
 }
