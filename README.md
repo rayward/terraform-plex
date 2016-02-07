@@ -7,7 +7,11 @@ Terraform Script for Sonarr + CouchPotato + NZBGet + Plex Server
 
 ## Installation
 
+- Create the user and group corresponding to `uid` and `gid` vars.
+- Create the config directories as outlined below for each application and chown them with the above user and group.
 - `terraform apply .`
+- Apps should be accessible on their given ports
+- Configure the media, tv and downloads paths through app UI as required.
 
 ## Terraform Vars
 | Var | Description | Default |
