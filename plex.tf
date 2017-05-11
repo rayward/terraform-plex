@@ -44,28 +44,28 @@ variable "downloads_dir" {
 	type = "string"
 }
 
+variable "plex_token" {
+	type = "string"
+}
+
 resource "docker_image" "nzbget" {
 	name = "linuxserver/nzbget"
-	keep_updated = true
 }
 
 resource "docker_image" "sonarr" {
 	name = "linuxserver/sonarr"
-	keep_updated = true
 }
 
 resource "docker_image" "couchpotato" {
 	name = "linuxserver/couchpotato"
-	keep_updated = true
 }
 
 resource "docker_image" "plex" {
-	name = "wernight/plex-media-server"
-	keep_updated = true
+	name = "wernight/plex-media-server:autoupdate"
 }
 
 resource "docker_network" "private_network" {
-  name = "htpc_network"
+	name = "htpc_network"
 	check_duplicate = true
 }
 
@@ -181,11 +181,14 @@ resource "docker_container" "plex" {
 	hostname = "plex"
 	restart ="always"
 	must_run = true
-	networks = ["${docker_network.private_network.id}"]
+	network_mode = "host"
 	ports = {
 		internal = 32400
 		external = 32400
 	}
+	env = [
+		"X_PLEX_TOKEN=${var.plex_token}"
+	]
 	ports = {
 		internal = 32410
 		external = 32410
