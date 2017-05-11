@@ -59,15 +59,15 @@ variable "plex_token" {
 }
 
 resource "docker_image" "nzbget" {
-    name = "linuxserver/nzbget"
+    name = "linuxserver/nzbget:latest"
 }
 
 resource "docker_image" "sonarr" {
-    name = "linuxserver/sonarr"
+    name = "linuxserver/sonarr:latest"
 }
 
 resource "docker_image" "couchpotato" {
-    name = "linuxserver/couchpotato"
+    name = "linuxserver/couchpotato:latest"
 }
 
 resource "docker_image" "plex" {
@@ -75,11 +75,11 @@ resource "docker_image" "plex" {
 }
 
 resource "docker_image" "deluge" {
-    name = "linuxserver/deluge"
+    name = "linuxserver/deluge:latest"
 }
 
 resource "docker_image" "portainer" {
-    name = "portainer/portainer"
+    name = "portainer/portainer:latest"
 }
 
 resource "docker_network" "private_network" {
