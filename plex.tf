@@ -310,4 +310,8 @@ resource "docker_container" "portainer" {
 		host_path = "${var.portainer_config_dir}"
 		container_path = "/data"
 	}
+  volumes = {
+    host_path = "/var/run/docker.sock"
+    container_path = "/var/run/docker.sock"
+  }
 }
