@@ -37,6 +37,11 @@ variable "deluge_config_dir" {
 	default = "/var/lib/deluge"
 }
 
+variable "portainer_config_dir" {
+	type = "string"
+	default = "/var/lib/portainer"
+}
+
 variable "media_dir" {
 	type = "string"
 }
@@ -71,6 +76,10 @@ resource "docker_image" "plex" {
 
 resource "docker_image" "deluge" {
 	name = "linuxserver/deluge"
+}
+
+resource "docker_image" "portainer" {
+	name = "portainer/portainer"
 }
 
 resource "docker_network" "private_network" {
@@ -274,5 +283,31 @@ resource "docker_container" "deluge" {
 	volumes = {
 		host_path = "${var.downloads_dir}"
 		container_path = "/downloads"
+	}
+}
+
+resource "docker_container" "portainer" {
+	name = "portainer"
+	image = "${docker_image.portainer.latest}"
+	hostname = "portainer"
+	restart = "always"
+	must_run = true
+	networks = ["${docker_network.private_network.id}"]
+	ports = {
+		internal = 9000
+		external = 80
+	}
+	env = [
+		"PUID=${var.uid}",
+		"PGID=${var.gid}"
+	]
+	volumes = {
+		host_path = "/etc/localtime"
+		container_path = "/etc/localtime"
+		read_only = true
+	}
+	volumes = {
+		host_path = "${var.portainer_config_dir}"
+		container_path = "/data"
 	}
 }
