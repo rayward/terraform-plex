@@ -32,6 +32,11 @@ variable "plex_config_dir" {
 	default = "/var/lib/plex"
 }
 
+variable "deluge_config_dir" {
+	type = "string"
+	default = "/var/lib/deluge"
+}
+
 variable "media_dir" {
 	type = "string"
 }
@@ -62,6 +67,10 @@ resource "docker_image" "couchpotato" {
 
 resource "docker_image" "plex" {
 	name = "wernight/plex-media-server:autoupdate"
+}
+
+resource "docker_image" "deluge" {
+	name = "linuxserver/deluge"
 }
 
 resource "docker_network" "private_network" {
@@ -223,4 +232,47 @@ resource "docker_container" "plex" {
 		container_path = "/media"
 	}
 	depends_on = ["docker_container.sonarr", "docker_container.couchpotato"]
+}
+
+resource "docker_container" "deluge" {
+	name = "deluge"
+	image = "${docker_image.deluge.latest}"
+	hostname = "deluge"
+	restart ="always"
+	must_run = true
+	networks = ["${docker_network.private_network.id}"]
+	ports = {
+		internal = 8112
+		external = 8112
+	}
+	ports = {
+		internal = 58846
+		external = 58846
+	}
+	ports = {
+		internal = 58946
+		external = 58946
+	}
+	ports = {
+		internal = 58946
+		external = 58946
+		protocol = "udp"
+	}
+	env = [
+		"PUID=${var.uid}",
+		"PGID=${var.gid}"
+	]
+	volumes = {
+		host_path = "/etc/localtime"
+		container_path = "/etc/localtime"
+		read_only = true
+	}
+	volumes = {
+		host_path = "${var.deluge_config_dir}"
+		container_path = "/config"
+	}
+	volumes = {
+		host_path = "${var.downloads_dir}"
+		container_path = "/downloads"
+	}
 }
